@@ -193,6 +193,15 @@ function plplot.labels3d(xlabel, ylabel, zlabel)
     pl.box3('bnstu', xlabel, 0.0, 0, 'bnstu', ylabel, 0.0, 0, 'bcdmnstuv', zlabel, 0.0, 0)
 end
 
+local function fixMinMax(min, max)
+    if math.abs(min-max) < 1e-16 then
+        local temp = min
+        min = temp - 1
+        max = temp + 1
+    end
+    return min, max
+end
+
 function plplot.plot(...)
     if select('#',...) == 0 then return end
     local arg = ...
@@ -223,6 +232,9 @@ function plplot.plot(...)
         formats[#formats+1] = f
         legends[#legends+1] = l
     end
+
+    xmin, xmax = fixMinMax(xmin, xmax)
+    ymin, ymax = fixMinMax(ymin, ymax)
 
     -- Axis
     pl.col0(0)
@@ -283,6 +295,10 @@ function plplot.splot(...)
         if z:max() > zmax then zmax = z:max() end
         legends[#legends+1] = l
     end
+
+    xmin, xmax = fixMinMax(xmin, xmax)
+    ymin, ymax = fixMinMax(ymin, ymax)
+    zmin, zmax = fixMinMax(zmin, zmax)
 
     -- Axis
     pl.col0(0)
