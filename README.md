@@ -99,3 +99,23 @@ plplot.close()
 ![Surface example](img/surf.png)
 
 If only one tensor is defined, then x and y values {0,1,2...} will be assumed.
+
+
+### Labels
+
+There are three functions to add labels to the plot:
+
+* `plplot.title(title)`: Adds a title.
+
+* `plplot.labels(title, xlabel, ylabel)`: Adds a title and labels for the two axis in a 2D plot.
+
+* `plplot.3dlabels(xlabel, ylabel, zlabel)`: Adds labels for all the axis in a 3D plot.
+
+
+
+### Colors
+
+The function `plplot.colors(axisColor, color)` changes the colors used for the plot. The colors are represented
+by tables with three numbers from 0 to 255 corresponding to the RGB components. The parameter `axisColor` determines
+the color that the library will use to print the axis and the labels. The second parameter is a list of colors that
+will be used in the same order to show the plots.
