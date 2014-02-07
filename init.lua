@@ -324,10 +324,14 @@ function plplot.splot(...)
 end
 
 function plplot.hist(data, nbin, min, max)
+    assert(data:dim() == 1, '1D tensor expected')
+
     local n    = data:size(1)
     local nbin = nbin or math.ceil(math.sqrt(n)) -- Sturges: math.ceil(math.log(n)/math.log(2)+1)
     local min  = min or data:min()
     local max  = max or data:max()
+
+    min, max = fixMinMax(min, max)
 
     local ymax = torch.histc(data, nbin, min, max):max()
 
