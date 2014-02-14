@@ -2,7 +2,7 @@
 -- Generated with dev/create-init.lua
 
 local ffi = require 'ffi'
-local C = ffi.load("plplotd")
+local C = ffi.load('plplotd')
 local pl = {}
 
 require 'plplot.cdefs'

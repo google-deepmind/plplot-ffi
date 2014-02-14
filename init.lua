@@ -162,7 +162,7 @@ end
 
 function plplot.init(cairoContext, width, height)
     -- Set dimensions
-    pl.setopt('geometry', string.format('%dx%d',width,height))
+    assert(pl.setopt('geometry', string.format('%dx%d',width,height)), 'Error in PLplot function plsetopt')
 
     -- Set device and initialize
     pl.sdev('extcairo')
