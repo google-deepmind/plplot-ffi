@@ -2,8 +2,8 @@
 -- Generated with dev/create-init.lua
 
 local ffi = require 'ffi'
-local C = pcall(ffi.load, 'plplotd')
-if not C then
+local loaded, C = pcall(ffi.load, 'plplotd')
+if not loaded then
    C = ffi.load('libplplotd.so.11')
 end
 local pl = {C = C}

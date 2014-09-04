@@ -1,4 +1,4 @@
-require 'torchffi'
+local ffi = require 'ffi'
 local pl = require 'plplot.api'
 
 plplot = {}
