@@ -3,8 +3,11 @@ print[[
 -- Generated with dev/create-api.lua
 
 local ffi = require 'ffi'
-local C = ffi.load("plplotd")
-local pl = {}
+local C = pcall(ffi.load, 'plplotd')
+if not C then
+   C = ffi.load('libplplotd.so.11')
+end
+local pl = {C = C}
 
 require 'plplot.cdefs'
 
