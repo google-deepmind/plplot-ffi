@@ -2,7 +2,8 @@ package = "plplot"
 version = "0-0"
 
 source = {
-   url = ""
+   url = 'git+file://git@github.com:sergomezcol/plplot-ffi.git',
+   branch = 'master'
 }
 
 description = {
