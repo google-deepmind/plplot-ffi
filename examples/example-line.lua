@@ -1,4 +1,3 @@
-local sdl = require 'sdl2'
 local cairo = require 'oocairo'
 local plplot = require 'plplot'
 
