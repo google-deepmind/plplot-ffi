@@ -11,6 +11,12 @@ This package requires PLplot to be installed in your system. You can download it
 brew install plplot
 ```
 
+or apt in Ubuntu:
+
+```
+apt-get install libplplot12 plplot12-driver-cairo
+```
+
 The PLplot functions will draw the plots into cairo surfaces. The [torch-oocairo](https://github.com/akfidjeland/torch-oocairo) provides Lua bindings for Torch.
 
 
