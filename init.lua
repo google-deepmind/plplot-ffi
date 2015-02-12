@@ -94,6 +94,9 @@ local function arguments(t)
         error('x and y dims are wrong :  x = ' .. x:nDimension() .. 'D y = ' .. y:nDimension() .. 'D')
     end
 
+    x = x:contiguous()
+    y = y:contiguous()
+
     return legend,x,y,format
 end
 
@@ -147,6 +150,11 @@ local function argumentsSurface(t)
     if x:nDimension() ~= 1 or y:nDimension() ~= 1 or z:nDimension() ~= 2 then
         error('x and y and z have incorrect dimensions: x = ' .. x:nDimension() .. 'D y = ' .. y:nDimension() .. 'D z = '.. z:nDimension() .. 'D' )
     end
+
+    x = x:contiguous()
+    y = y:contiguous()
+    z = z:contiguous()
+
     return legend,x,y,z
 end
 
