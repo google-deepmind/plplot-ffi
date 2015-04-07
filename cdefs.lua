@@ -1702,4 +1702,22 @@ static const PLINT PL_HIST_IGNORE_OUTLIERS = 2;
 static const PLINT PL_HIST_NOEXPAND = 8;
 static const PLINT PL_HIST_NOEMPTY = 16;
 static const PLINT PL_HIST_DEFAULT = 0;
+
+static const PLINT PL_LEGEND_NONE = 0x1;
+static const PLINT PL_LEGEND_COLOR_BOX = 0x2;
+static const PLINT PL_LEGEND_LINE = 0x4;
+static const PLINT PL_LEGEND_SYMBOL = 0x8;
+static const PLINT PL_LEGEND_TEXT_LEFT = 0x10;
+static const PLINT PL_LEGEND_BACKGROUND = 0x20;
+static const PLINT PL_LEGEND_BOUNDING_BOX = 0x40;
+static const PLINT PL_LEGEND_ROW_MAJOR = 0x80;
+
+static const PLINT PL_POSITION_LEFT = 0x1;
+static const PLINT PL_POSITION_RIGHT = 0x2;
+static const PLINT PL_POSITION_TOP = 0x4;
+static const PLINT PL_POSITION_BOTTOM = 0x8;
+static const PLINT PL_POSITION_INSIDE = 0x10;
+static const PLINT PL_POSITION_OUTSIDE = 0x20;
+static const PLINT PL_POSITION_VIEWPORT = 0x40;
+static const PLINT PL_POSITION_SUBPAGE = 0x80;
 ]]

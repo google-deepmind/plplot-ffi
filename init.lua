@@ -269,6 +269,93 @@ function plplot.plot(...)
     end
 end
 
+function plplot.legend(plots, options)
+    local options = options or {}
+    local legendPosition = options.position or 0
+    local legendSize = options.size or 0.1
+
+    if select('#',plots) == 0 then return end
+
+    local formats = {}
+    local legends = {}
+
+    -- Only one plot
+    if type(plots[1]) ~= "table" then
+        plots = {plots}
+    end
+
+    -- Reading arguments
+    for i,v in ipairs(plots) do
+        local l,x,y,f = arguments(v)
+        formats[#formats+1] = f
+        legends[#legends+1] = l
+    end
+
+    -- Legend parameters
+    local LINE_WIDTH = 1
+    local LINE_STYLE = 1
+    local SYMBOL_NUMBER = 3
+    local TEXT_COLOR = 0
+
+    local options = ffi.new('int[?]', #legends)
+    local text_colors = ffi.new('int[?]', #legends)
+    local line_colors = ffi.new('int[?]', #legends)
+    local line_styles = ffi.new('int[?]', #legends)
+    local line_widths = ffi.new('double[?]', #legends)
+    local symbol_numbers = ffi.new('int[?]', #legends)
+    local symbol_colors = ffi.new('int[?]', #legends)
+    local symbol_scales = ffi.new('double[?]', #legends)
+    local symbols = ffi.new('char*[?]', #legends)
+    local legend_width = ffi.new('double[1]')
+    local legend_height = ffi.new('double[1]')
+    local text = ffi.new('char*[?]', #legends)
+    local text_colors = ffi.new('int[?]', #legends)
+    for i = 0,#formats-1 do
+        local color = i % 14 + 1
+        local symbol = string.match(formats[i+1],'[^-]')
+        local legend = legends[i+1]
+
+        text_colors[i] = 1
+        line_colors[i] = color
+        if formats[i+1]:find('-') then
+            options[i] = pl.LEGEND_LINE
+        else
+            options[i] = 0
+        end
+        options[i] = options[i] + pl.LEGEND_SYMBOL
+        line_styles[i] = LINE_STYLE
+        line_widths[i] = LINE_WIDTH
+        symbol_colors[i] = color
+        symbol_scales[i] = 1
+        symbol_numbers[i] = SYMBOL_NUMBER
+        symbols[i] = ffi.new('char[?]', #symbol + 1)
+        ffi.copy(symbols[i], symbol, #symbol)
+        symbols[i][#symbol] = 0
+        text[i] = ffi.new('char[?]', #legend + 1)
+        ffi.copy(text[i], legend, #legend)
+        text[i][#legend] = 0
+        text_colors[i] = TEXT_COLOR
+    end
+
+    symbols = ffi.cast('const char**', symbols)
+    text = ffi.cast('const char**', text)
+
+    -- Printing legend
+    pl.col0(0)
+    local r = ffi.new('int[1]')
+    local g = ffi.new('int[1]')
+    local b = ffi.new('int[1]')
+    local a = ffi.new('double[1]')
+    pl.gcol0a(15, r, g, b, a)
+    pl.scol0a(15, 255, 255, 255, 0)
+    pl.legend(legend_width, legend_height,
+        pl.LEGEND_BACKGROUND + pl.LEGEND_BOUNDING_BOX, legendPosition, 0.0, 0.0,
+        legendSize, 15, 0, 1, 0, 0, #legends, options, 1.0, 1.0, 2.0, 1.,
+        text_colors, text, NULL, NULL, NULL, NULL, line_colors, line_styles,
+        line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
+    pl.scol0a(15, r[0], g[0], b[0], a[0])
+end
+
 function plplot.splot(...)
     if select('#',...) == 0 then return end
     local arg = ...

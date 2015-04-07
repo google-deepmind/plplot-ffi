@@ -1,5 +1,5 @@
 -- Do not change this file manually
--- Generated with dev/create-init.lua
+-- Generated with dev/create-api.lua
 
 local ffi = require 'ffi'
 local loaded, C = pcall(ffi.load, 'plplotd')
@@ -11,12 +11,12 @@ local pl = {C = C}
 require 'plplot.cdefs'
 
 local function register(luafuncname, funcname)
-  local symexists, msg = pcall(function()
-                                 local sym = C[funcname]
-                               end)
-  if symexists then
-    pl[luafuncname] = C[funcname]
-  end
+    local symexists, msg = pcall(function()
+                              local sym = C[funcname]
+                           end)
+    if symexists then
+        pl[luafuncname] = C[funcname]
+    end
 end
 
 register('_setcontlabelformat', 'c_pl_setcontlabelformat')
@@ -239,5 +239,21 @@ register('HIST_IGNORE_OUTLIERS', 'PL_HIST_IGNORE_OUTLIERS')
 register('HIST_NOEXPAND', 'PL_HIST_NOEXPAND')
 register('HIST_NOEMPTY', 'PL_HIST_NOEMPTY')
 register('HIST_DEFAULT', 'PL_HIST_DEFAULT')
+register('LEGEND_NONE', 'PL_LEGEND_NONE')
+register('LEGEND_COLOR_BOX', 'PL_LEGEND_COLOR_BOX')
+register('LEGEND_LINE', 'PL_LEGEND_LINE')
+register('LEGEND_SYMBOL', 'PL_LEGEND_SYMBOL')
+register('LEGEND_TEXT_LEFT', 'PL_LEGEND_TEXT_LEFT')
+register('LEGEND_BACKGROUND', 'PL_LEGEND_BACKGROUND')
+register('LEGEND_BOUNDING_BOX', 'PL_LEGEND_BOUNDING_BOX')
+register('LEGEND_ROW_MAJOR', 'PL_LEGEND_ROW_MAJOR')
+register('POSITION_LEFT', 'PL_POSITION_LEFT')
+register('POSITION_RIGHT', 'PL_POSITION_RIGHT')
+register('POSITION_TOP', 'PL_POSITION_TOP')
+register('POSITION_BOTTOM', 'PL_POSITION_BOTTOM')
+register('POSITION_INSIDE', 'PL_POSITION_INSIDE')
+register('POSITION_OUTSIDE', 'PL_POSITION_OUTSIDE')
+register('POSITION_VIEWPORT', 'PL_POSITION_VIEWPORT')
+register('POSITION_SUBPAGE', 'PL_POSITION_SUBPAGE')
 
 return pl

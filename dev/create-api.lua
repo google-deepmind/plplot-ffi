@@ -3,8 +3,8 @@ print[[
 -- Generated with dev/create-api.lua
 
 local ffi = require 'ffi'
-local C = pcall(ffi.load, 'plplotd')
-if not C then
+local loaded, C = pcall(ffi.load, 'plplotd')
+if not loaded then
    C = ffi.load('libplplotd.so.11')
 end
 local pl = {C = C}
@@ -12,12 +12,12 @@ local pl = {C = C}
 require 'plplot.cdefs'
 
 local function register(luafuncname, funcname)
-   local symexists, msg = pcall(function()
+    local symexists, msg = pcall(function()
                               local sym = C[funcname]
                            end)
-   if symexists then
-      pl[luafuncname] = C[funcname]
-   end
+    if symexists then
+        pl[luafuncname] = C[funcname]
+    end
 end
 ]]
 
@@ -56,7 +56,5 @@ for defname in txt:gmatch('PL_([^%=,%.%;<%s%(%)|%[%]]+)') do
    end
 end
 
-print[[
-
-return pl
-]]
+print()
+print('return pl')
