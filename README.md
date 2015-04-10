@@ -107,6 +107,29 @@ plplot.close()
 If only one tensor is defined, then x and y values {0,1,2...} will be assumed.
 
 
+### Legends
+
+```lua
+local plplot = require 'plplot'
+
+...
+
+local x = torch.DoubleTensor{0,1,2,3,4,5,6,7,8,9,10}
+local plots = {}
+for i = 1,3 do
+    plots[i] = {'Line ' .. i, x, torch.mul(x,i), '*-'}
+end
+
+plplot.init(cairoContext, WIDTH, HEIGHT)
+plplot.plot(plots)
+plplot.labels('Line Plot', 'X axis', 'Y axis')
+plplot.legend(plots, {position=pl.POSITION_LEFT+pl.POSITION_TOP, size=0.2})
+plplot.close()
+```
+
+![Legends example](img/legend.png)
+
+
 ### Labels
 
 There are three functions to add labels to the plot:
