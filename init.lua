@@ -97,7 +97,7 @@ local function arguments(t)
     x = x:contiguous()
     y = y:contiguous()
 
-    return legend,x,y,format
+    return {x = x, y = y, format = format, legend = legend}
 end
 
 -- Based on a similar function from http://github.com/torch/gnuplot
@@ -155,7 +155,7 @@ local function argumentsSurface(t)
     y = y:contiguous()
     z = z:contiguous()
 
-    return legend,x,y,z
+    return {x = x, y = y, z = z, format = format, legend = legend}
 end
 
 function plplot.colors(axisColor, colors)
@@ -201,58 +201,87 @@ function plplot.labels3d(xlabel, ylabel, zlabel)
     pl.box3('bnstu', xlabel, 0.0, 0, 'bnstu', ylabel, 0.0, 0, 'bcdmnstuv', zlabel, 0.0, 0)
 end
 
-local function fixMinMax(min, max)
-    if math.abs(min-max) < 1e-16 then
-        local temp = min
-        min = temp - 1
-        max = temp + 1
+local function initializeAxis(arg)
+    local function getValue(value, sign)
+        return {value = value or sign*math.huge, fixed = (value~=nil)}
     end
-    return min, max
+
+    local arg = arg or {}
+    return {
+        min = getValue(arg[1], 1),
+        max = getValue(arg[2], -1),
+    }
+end
+
+local function updateAxis(axis, v)
+    if not axis.max.fixed then
+        if v:max() > axis.max.value then axis.max.value = v:max() end
+    end
+    if not axis.min.fixed then
+        if v:min() < axis.min.value then axis.min.value = v:min() end
+    end
+end
+
+local function adjustAxis(axis)
+    if math.abs(axis.min.value - axis.max.value) < 1e-16 then
+        local temp = axis.min.value
+        axis.min.value = temp - 1
+        axis.max.value = temp + 1
+    end
+end
+
+local function getMinMax(axis)
+    return axis.min.value, axis.max.value
+end
+
+local function onePlotArg(arg)
+    local newArg = {{}}
+    -- Keep named elements and bundle unnamed elements
+    for i, v in pairs(arg) do
+        if type(i) == "number" then
+            newArg[1][i] = v
+        else
+            newArg[i] = v
+        end
+    end
+    return newArg
 end
 
 function plplot.plot(...)
     if select('#',...) == 0 then return end
     local arg = ...
 
-    local datax = {}
-    local datay = {}
-    local formats = {}
-    local legends = {}
-
     -- Only one plot
     if type(arg[1]) ~= "table" then
-        arg = {arg}
+        arg = onePlotArg(arg)
     end
 
     -- Reading arguments
-    xmin = math.huge
-    xmax = -math.huge
-    ymin = math.huge
-    ymax = -math.huge
-    for i,v in ipairs(arg) do
-        local l,x,y,f = arguments(v)
-        datax[#datax+1] = x
-        if x:min() < xmin then xmin = x:min() end
-        if x:max() > xmax then xmax = x:max() end
-        datay[#datay+1] = y
-        if y:min() < ymin then ymin = y:min() end
-        if y:max() > ymax then ymax = y:max() end
-        formats[#formats+1] = f
-        legends[#legends+1] = l
+    local axes = arg.axes or {}
+    local xaxis = initializeAxis(axes.x)
+    local yaxis = initializeAxis(axes.y)
+    local data = {}
+    for i, v in ipairs(arg) do
+        data[i] = arguments(v)
+        updateAxis(xaxis, data[i].x)
+        updateAxis(yaxis, data[i].y)
     end
 
-    xmin, xmax = fixMinMax(xmin, xmax)
-    ymin, ymax = fixMinMax(ymin, ymax)
+    adjustAxis(xaxis)
+    adjustAxis(yaxis)
 
     -- Axis
+    local xmin, xmax = getMinMax(xaxis)
+    local ymin, ymax = getMinMax(yaxis)
     pl.col0(0)
     pl.env(xmin, xmax, ymin, ymax, 0, 0)
 
     -- Plotting
-    for i = 1,#datax do
-        x = datax[i]
-        y = datay[i]
-        format = formats[i]
+    for i, v in pairs(data) do
+        local x = v.x
+        local y = v.y
+        local legend = v.legend
+        local format = v.format
 
         pl.col0((i-1)%14+1)
         if format:find('|') then
@@ -280,46 +309,41 @@ function plplot.splot(...)
 
     -- Only one plot
     if type(arg[1]) ~= "table" then
-        arg = {arg}
+        arg = onePlotArg(arg)
     end
 
     -- Reading arguments
-    local xmin = math.huge
-    local xmax = -math.huge
-    local ymin = math.huge
-    local ymax = -math.huge
-    local zmin = math.huge
-    local zmax = -math.huge
-    for i,v in ipairs(arg) do
-        local l,x,y,z = argumentsSurface(v)
-        datax[#datax+1] = x
-        if x:min() < xmin then xmin = x:min() end
-        if x:max() > xmax then xmax = x:max() end
-        datay[#datay+1] = y
-        if y:min() < ymin then ymin = y:min() end
-        if y:max() > ymax then ymax = y:max() end
-        dataz[#dataz+1] = z
-        if z:min() < zmin then zmin = z:min() end
-        if z:max() > zmax then zmax = z:max() end
-        legends[#legends+1] = l
+    local axes = arg.axes or {}
+    local xaxis = initializeAxis(axes.x)
+    local yaxis = initializeAxis(axes.y)
+    local zaxis = initializeAxis(axes.z)
+    local data = {}
+    for i, v in ipairs(arg) do
+        data[i] = argumentsSurface(v)
+        updateAxis(xaxis, data[i].x)
+        updateAxis(yaxis, data[i].y)
+        updateAxis(zaxis, data[i].z)
     end
 
-    xmin, xmax = fixMinMax(xmin, xmax)
-    ymin, ymax = fixMinMax(ymin, ymax)
-    zmin, zmax = fixMinMax(zmin, zmax)
+    adjustAxis(xaxis)
+    adjustAxis(yaxis)
+    adjustAxis(zaxis)
 
     -- Axis
+    local xmin, xmax = getMinMax(xaxis)
+    local ymin, ymax = getMinMax(yaxis)
+    local zmin, zmax = getMinMax(zaxis)
     pl.col0(0)
     pl.adv(0)
     pl.vpor(0, 1, 0, 0.9)
-    pl.wind(xmin, xmax, ymin*0.9, ymax*1.1)
+    pl.wind(-1, 1, -0.9, 1.1)
     pl.w3d(1, 1, 0.8, xmin, xmax, ymin, ymax, zmin, zmax, 60, 30)
 
     -- Plotting
-    for i = 1,#datax do
-        x = datax[i]
-        y = datay[i]
-        z = dataz[i]
+    for i, v in pairs(data) do
+        local x = v.x
+        local y = v.y
+        local z = v.z
 
         z_data = ffi.new('const double * [?]', x:size(1))
         for i = 1,x:size(1) do
@@ -336,10 +360,10 @@ function plplot.hist(data, nbin, min, max)
 
     local n    = data:size(1)
     local nbin = nbin or math.ceil(math.sqrt(n)) -- Sturges: math.ceil(math.log(n)/math.log(2)+1)
-    local min  = min or data:min()
-    local max  = max or data:max()
 
-    min, max = fixMinMax(min, max)
+    local xaxis = initializeAxis{min or data:min(), max or data:max()}
+    adjustAxis(xaxis)
+    local min, max = getMinMax(xaxis)
 
     local ymax = torch.histc(data, nbin, min, max):max()
 
