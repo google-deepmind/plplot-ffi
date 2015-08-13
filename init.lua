@@ -108,6 +108,7 @@ local function argumentsSurface(t)
     local x = nil
     local y = nil
     local z = nil
+    local format = nil
 
     if #t == 0 then
         error('empty argument list')
