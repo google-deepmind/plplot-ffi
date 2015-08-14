@@ -108,7 +108,6 @@ local function argumentsSurface(t)
     local x = nil
     local y = nil
     local z = nil
-    local format = nil
 
     if #t == 0 then
         error('empty argument list')
@@ -156,7 +155,7 @@ local function argumentsSurface(t)
     y = y:contiguous()
     z = z:contiguous()
 
-    return {x = x, y = y, z = z, format = format, legend = legend}
+    return {x = x, y = y, z = z, legend = legend}
 end
 
 function plplot.colors(axisColor, colors)
