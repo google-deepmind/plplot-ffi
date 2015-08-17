@@ -155,7 +155,7 @@ local function argumentsSurface(t)
     y = y:contiguous()
     z = z:contiguous()
 
-    return {x = x, y = y, z = z, format = format, legend = legend}
+    return {x = x, y = y, z = z, legend = legend}
 end
 
 function plplot.colors(axisColor, colors)
